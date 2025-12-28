@@ -1,0 +1,26 @@
+.admin-container {
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; background: #2c3e50;
+}
+.login-box {
+    background: white; padding: 30px; border-radius: 8px;
+    width: 300px; display: flex; flex-direction: column; gap: 15px;
+}
+.login-box input { padding: 10px; font-size: 16px; }
+.login-box button {
+    padding: 10px; background: #27ae60; color: white; border: none; cursor: pointer;
+}
+.error-msg { color: red; font-size: 0.9rem; margin: 0; }
+
+/* Dashboard */
+.admin-dashboard { padding: 20px; font-family: sans-serif; }
+.admin-dashboard header { 
+    display: flex; justify-content: space-between; margin-bottom: 20px; 
+}
+.table-wrapper table {
+    width: 100%; border-collapse: collapse;
+}
+.table-wrapper th, .table-wrapper td {
+    border: 1px solid #ddd; padding: 8px; text-align: left;
+}
+.table-wrapper th { background-color: #f2f2f2; }

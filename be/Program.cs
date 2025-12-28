@@ -1,5 +1,7 @@
 ﻿using ChatApp.API.Data;
 using ChatApp.API.Hubs;
+using ChatApp.API.Services;
+//using ChatApp.API.Controllers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ChatDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.Parse("8.0.30-mysql")));
-
+builder.Services.AddSingleton<AdminSecurityService>();
+builder.Services.AddControllers();
 // 2. Add SignalR
 builder.Services.AddSignalR();
 
@@ -32,6 +35,8 @@ var app = builder.Build();
 app.UseRouting(); // Phải có Routing trước CORS
 
 app.UseCors("ReactPolicy"); // <--- Kích hoạt Policy đã tạo ở trên
+
+app.MapControllers();
 
 app.MapHub<ChatHub>("/chatHub"); // Map đường dẫn Hub
 

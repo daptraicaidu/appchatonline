@@ -21,6 +21,9 @@ function App() {
 
   const MAX_MSG_LENGTH = 1000;
   const MAX_NAME_LENGTH = 15;
+  const MAX_FEEDBACK_LENGTH = 1000;
+
+  const [connectionStatus, setConnectionStatus] = useState('connected'); // 'connected', 'reconnecting', 'disconnected'
 
   const formatTime = (dateString) => {
     if (!dateString) return "...";
@@ -37,6 +40,7 @@ function App() {
       .withUrl("http://localhost:5219/chatHub")
       .withAutomaticReconnect()
       .build();
+    setConnectionStatus('disconnected');
     setConnection(newConnection);
   }, []);
 
@@ -45,7 +49,7 @@ function App() {
       connection.start()
         .then(() => {
           console.log('Connected!');
-
+          setConnectionStatus('connected');
           // 1. Lắng nghe tin nhắn
           connection.on('ReceiveMessage', (user, message, createdAt) => {
             const newMsg = { user, message, createdAt };
@@ -58,6 +62,18 @@ function App() {
           });
         })
         .catch(e => console.log('Connection failed: ', e));
+
+        connection.onreconnecting(() => {
+        setConnectionStatus('reconnecting');
+      });
+
+      connection.onreconnected(() => {
+        setConnectionStatus('connected');
+      });
+
+      connection.onclose(() => {
+        setConnectionStatus('disconnected');
+      });
     }
   }, [connection]);
 
@@ -89,6 +105,10 @@ function App() {
   const handleSendFeedback = async () => {
     if (!feedbackContent.trim()) {
         alert("Vui lòng nhập nội dung góp ý!");
+        return;
+    }
+    if (feedbackContent.length > MAX_FEEDBACK_LENGTH) {
+        alert(`Nội dung quá dài! Vui lòng rút ngắn dưới ${MAX_FEEDBACK_LENGTH} ký tự.`);
         return;
     }
     if (connection) {
@@ -139,6 +159,14 @@ function App() {
               value={feedbackContent}
               onChange={(e) => setFeedbackContent(e.target.value)}
             ></textarea>
+            <div style={{ textAlign: 'right', marginTop: '5px' }}>
+                <small style={{ 
+                    color: feedbackContent.length >= MAX_FEEDBACK_LENGTH ? 'red' : '#666',
+                    fontWeight: feedbackContent.length >= MAX_FEEDBACK_LENGTH ? 'bold' : 'normal'
+                }}>
+                    {feedbackContent.length}/{MAX_FEEDBACK_LENGTH}
+                </small>
+            </div>
             <div style={{display: 'flex', gap: '10px', marginTop: '15px'}}>
                 <button style={{background: '#888'}} onClick={() => setIsFeedbackOpen(false)}>Đóng</button>
                 <button onClick={handleSendFeedback}>Gửi Góp Ý</button>
@@ -149,6 +177,12 @@ function App() {
 
       {/* Khung Chat Chính */}
       <div className="chat-frame">
+        {connectionStatus === 'reconnecting' && (
+           <div className="status-banner warning">⚠️ Đang kết nối lại...</div>
+        )}
+        {connectionStatus === 'disconnected' && (
+           <div className="status-banner error">❌ Mất kết nối tới máy chủ. Vui lòng tải lại trang.</div>
+        )}
         <header className="chat-header">
           <div className="header-left">
              <span>Xin chào, <strong>{user || '...'}</strong></span>
