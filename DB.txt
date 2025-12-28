@@ -1,0 +1,15 @@
+CREATE TABLE ChatMessages (
+    Id INT AUTO_INCREMENT NOT NULL,
+    User LONGTEXT CHARACTER SET utf8mb4 NULL,
+    Message LONGTEXT CHARACTER SET utf8mb4 NULL,
+    CreatedAt DATETIME(6) NOT NULL,
+    CONSTRAINT PK_ChatMessages PRIMARY KEY (Id)
+);
+
+CREATE TABLE Feedbacks (
+    Id INT AUTO_INCREMENT NOT NULL,
+    User LONGTEXT CHARACTER SET utf8mb4 NULL, -- Tên người góp ý
+    Content LONGTEXT CHARACTER SET utf8mb4 NULL, -- Nội dung
+    CreatedAt DATETIME(6) NOT NULL,
+    CONSTRAINT PK_Feedbacks PRIMARY KEY (Id)
+);

@@ -1,0 +1,252 @@
+/* --- 1. FORCE RESET (Quan trọng: Phá bỏ style mặc định của Vite) --- */
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+#root {
+  max-width: none !important; /* Ghi đè giới hạn chiều rộng của Vite */
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f2f5;
+  overflow: hidden; /* Chặn cuộn body, chỉ cuộn khung chat */
+}
+
+/* --- 2. LAYOUT CHÍNH --- */
+/* Lớp bao ngoài cùng: Nhiệm vụ căn giữa khung chat */
+.app-container {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: flex-start; /* Căn từ trên xuống (để chừa margin top) */
+  width: 100%;
+  height: 100vh;
+  padding-top: 20px; /* Cách lề trên một chút cho đẹp trên PC */
+  box-sizing: border-box;
+}
+
+/* Khung chat: Chứa Header + Chat + Input */
+.chat-frame {
+  width: 60%; /* YÊU CẦU: 60% màn hình PC */
+  height: 95vh; /* Chiếm 90% chiều cao màn hình */
+  display: flex;
+  flex-direction: column; /* Xếp dọc */
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  overflow: hidden; /* Bo góc cả nội dung bên trong */
+}
+
+/* --- 3. CÁC THÀNH PHẦN CON --- */
+/* Header */
+.chat-header {
+  padding: 15px 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Flex wrap để xuống dòng trên mobile nhỏ */
+  flex-wrap: wrap; 
+  gap: 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Badge Online */
+.online-badge {
+  font-size: 0.9rem;
+  color: #2e7d32; /* Màu xanh lá đậm */
+  background-color: #e8f5e9;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-weight: bold;
+  white-space: nowrap; /* Không xuống dòng */
+}
+
+/* Nút Góp ý */
+.btn-feedback {
+  background-color: #ff9800; /* Màu cam nổi bật */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.btn-feedback:hover { background-color: #f57c00; }
+
+/* Giữ nguyên btn-edit cũ, chỉ đảm bảo style */
+.btn-edit {
+  background-color: #f0f2f5;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+}
+.btn-edit:hover { background-color: #dcdcdc; }
+
+/* TextArea trong Modal Góp ý */
+.feedback-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: inherit;
+  resize: vertical; /* Cho phép kéo giãn chiều dọc */
+}
+
+/* Responsive Mobile cho Header */
+@media (max-width: 480px) {
+  .chat-header {
+    justify-content: center; /* Căn giữa khi màn hình quá nhỏ */
+  }
+  .header-left, .header-right {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Khu vực tin nhắn (Cuộn dọc) */
+.messages-area {
+  flex: 1; /* Chiếm hết không gian còn lại */
+  overflow-y: auto; /* Cho phép cuộn dọc */
+  padding: 20px;
+  background-color: #eef3f6; /* Màu nền nhẹ dịu mắt */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-item {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  max-width: 100%;
+  word-wrap: break-word; /* Xuống dòng nếu quá dài */
+}
+
+.msg-time {
+  font-size: 0.75rem;
+  color: #999;
+  margin-right: 8px;
+  font-family: monospace;
+}
+
+.msg-user {
+  color: #0078d4;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* Khu vực nhập liệu */
+.input-area {
+  padding: 15px;
+  background-color: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start; /* Căn lề trên để Input và Nút gửi thẳng hàng */
+}
+
+/* Container bao quanh Input để chứa thêm bộ đếm */
+.input-wrapper {
+  flex: 8; /* Chiếm phần lớn diện tích */
+  display: flex;
+  flex-direction: column; /* Xếp dọc: Input trên, Đếm dưới */
+}
+
+.msg-input {
+  width: 90%; /* Full width của wrapper */
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  outline: none;
+  font-size: 1rem;
+}
+.msg-input:focus { border-color: #0078d4; }
+
+/* Bộ đếm ký tự */
+.char-counter {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 5px;
+  margin-left: 15px; /* Thụt vào một chút cho thẳng với text input */
+  transition: color 0.3s;
+}
+
+.char-counter.limit-reached {
+  color: red;
+  font-weight: bold;
+}
+
+.btn-send {
+  flex: 2;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 46px; /* Chiều cao cố định để cân đối với input */
+}
+.btn-send:hover { background-color: #0060aa; }
+
+/* --- 4. RESPONSIVE MOBILE --- */
+@media (max-width: 768px) {
+  .app-container {
+    padding-top: 0; /* Mobile không cần lề trên */
+  }
+
+  .chat-frame {
+    width: 100%; /* YÊU CẦU: Full màn hình Mobile */
+    height: 100vh; /* Full chiều cao */
+    border-radius: 0; /* Bỏ bo góc */
+  }
+}
+
+/* --- 5. MODAL --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  display: flex; justify-content: center; align-items: center;
+}
+.modal-content {
+  background: white; padding: 25px; border-radius: 10px;
+  width: 90%; max-width: 350px; text-align: center;
+}
+.modal-content input {
+  width: 100%; padding: 10px; margin: 15px 0;
+  border: 1px solid #ccc; border-radius: 5px;
+}
+.modal-content button {
+  width: 100%; padding: 10px; background: #0078d4;
+  color: white; border: none; border-radius: 5px; cursor: pointer;
+}
